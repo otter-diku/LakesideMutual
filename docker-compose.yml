@@ -13,10 +13,10 @@
 #
 # Note that you might have to adjust the REACT_APP_ and VUE_APP environment
 # variables pointing to the backend services, depending on your hosting
-# environment. By default, they point to localhost, which is fine when running 
-# the services locally. In a cloud deployment, these should be changed to the 
+# environment. By default, they point to localhost, which is fine when running
+# the services locally. In a cloud deployment, these should be changed to the
 # public domainname of the respective backend service.
-# 
+#
 # To shut down the applications, simply terminate the previous command.
 #
 
@@ -107,7 +107,7 @@ services:
       - "REACT_APP_CUSTOMER_MANAGEMENT_BACKEND=http://localhost:8100"
     ports:
       - "3000:80"
-      
+
   risk-management-server:
     build: risk-management-server
     image: lakesidemutual/risk-management-server
@@ -118,3 +118,27 @@ services:
       - "ACTIVEMQ_PORT=61613"
     ports:
       - "50051:50051"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      # To learn about configuring Kafka for access across networks see
+      # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
+      - "9092:9092"
+      - "29092:29092"

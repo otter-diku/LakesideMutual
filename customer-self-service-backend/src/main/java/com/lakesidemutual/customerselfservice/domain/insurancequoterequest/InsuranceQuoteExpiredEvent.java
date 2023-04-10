@@ -35,4 +35,12 @@ public class InsuranceQuoteExpiredEvent implements DomainEvent {
 	public void setInsuranceQuoteRequestId(Long insuranceQuoteRequestId) {
 		this.insuranceQuoteRequestId = insuranceQuoteRequestId;
 	}
+
+	@Override
+	public String toString() {
+		return "InsuranceQuoteExpiredEvent{" +
+				"date=" + date +
+				", insuranceQuoteRequestId=" + insuranceQuoteRequestId +
+				'}';
+	}
 }

@@ -31,6 +31,9 @@ public class KafkaTopicConfiguration {
     @Value(value = "${policyCreatedEvent.queueName}")
     private String policyCreatedTopic;
 
+    @Value(value = "${riskmanagement.queueName}")
+    private String riskManagementTopic;
+
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -62,6 +65,11 @@ public class KafkaTopicConfiguration {
     @Bean
     public NewTopic createPolicyCreatedTopic() {
         return new NewTopic(policyCreatedTopic, 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic createRiskManagementTopic() {
+        return new NewTopic(riskManagementTopic, 1, (short) 1);
     }
 
 

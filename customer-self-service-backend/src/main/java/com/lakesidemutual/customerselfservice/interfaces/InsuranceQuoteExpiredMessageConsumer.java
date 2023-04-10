@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +26,12 @@ public class InsuranceQuoteExpiredMessageConsumer {
 	@Autowired
 	private InsuranceQuoteRequestRepository insuranceQuoteRequestRepository;
 
-	@JmsListener(destination = "${insuranceQuoteExpiredEvent.queueName}")
-	public void receiveInsuranceQuoteExpiredEvent(final Message<InsuranceQuoteExpiredEvent> message) {
-		logger.info("A new InsuranceQuoteResponseEvent has been received.");
-		final InsuranceQuoteExpiredEvent insuranceQuoteExpiredEvent = message.getPayload();
+	@KafkaListener(topics = "${insuranceQuoteExpiredEvent.queueName}",
+			groupId = "${spring.kafka.group-id}",
+			containerFactory = "insuranceQuoteExpiredListenerFactory")
+	public void receiveInsuranceQuoteExpiredEvent(final InsuranceQuoteExpiredEvent insuranceQuoteExpiredEvent) {
+		logger.info("Received insurance quote expired event");
+
 		final Long id = insuranceQuoteExpiredEvent.getInsuranceQuoteRequestId();
 		final Optional<InsuranceQuoteRequestAggregateRoot> insuranceQuoteRequestOpt = insuranceQuoteRequestRepository.findById(id);
 

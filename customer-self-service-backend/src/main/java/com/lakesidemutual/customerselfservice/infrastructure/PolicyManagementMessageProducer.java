@@ -2,6 +2,8 @@ package com.lakesidemutual.customerselfservice.infrastructure;
 
 import java.util.Date;
 
+import org.h2.engine.Domain;
+import org.microserviceapipatterns.domaindrivendesign.DomainEvent;
 import org.microserviceapipatterns.domaindrivendesign.InfrastructureService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +33,9 @@ public class PolicyManagementMessageProducer implements InfrastructureService {
 	@Value("${customerDecisionEvent.queueName}")
 	private String customerDecisionEventQueue;
 
-	@Autowired
-	private JmsTemplate jmsTemplate;
 
 	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
+	private KafkaTemplate<String, DomainEvent> kafkaTemplate;
 
 
 	public void sendInsuranceQuoteRequest(Date date, InsuranceQuoteRequestDto insuranceQuoteRequestDto) {
@@ -50,21 +50,18 @@ public class PolicyManagementMessageProducer implements InfrastructureService {
 
 	private void emitInsuranceQuoteRequestEvent(InsuranceQuoteRequestEvent insuranceQuoteRequestEvent) {
 		try {
-			jmsTemplate.convertAndSend(insuranceQuoteRequestEventQueue, insuranceQuoteRequestEvent);
-			kafkaTemplate.send(insuranceQuoteRequestEventQueue, insuranceQuoteRequestEvent.toString());
-
+			kafkaTemplate.send(insuranceQuoteRequestEventQueue, insuranceQuoteRequestEvent);
 			logger.info("Successfully sent a insurance quote request to the Policy Management backend.");
-		} catch(JmsException exception) {
+		} catch(Exception exception) {
 			logger.error("Failed to send a insurance quote request to the Policy Management backend.", exception);
 		}
 	}
 
 	private void emitCustomerDecisionEvent(CustomerDecisionEvent customerDecisionEvent) {
 		try {
-			jmsTemplate.convertAndSend(customerDecisionEventQueue, customerDecisionEvent);
-			kafkaTemplate.send(customerDecisionEventQueue, customerDecisionEvent.toString());
+			kafkaTemplate.send(customerDecisionEventQueue, customerDecisionEvent);
 			logger.info("Successfully sent a customer decision event to the Policy Management backend.");
-		} catch(JmsException exception) {
+		} catch(Exception exception) {
 			logger.error("Failed to send a customer decision event to the Policy Management backend.", exception);
 		}
 	}

@@ -45,4 +45,13 @@ public class PolicyCreatedEvent implements DomainEvent {
 	public void setPolicyId(String policyId) {
 		this.policyId = policyId;
 	}
+
+	@Override
+	public String toString() {
+		return "PolicyCreatedEvent{" +
+				"date=" + date +
+				", insuranceQuoteRequestId=" + insuranceQuoteRequestId +
+				", policyId='" + policyId + '\'' +
+				'}';
+	}
 }

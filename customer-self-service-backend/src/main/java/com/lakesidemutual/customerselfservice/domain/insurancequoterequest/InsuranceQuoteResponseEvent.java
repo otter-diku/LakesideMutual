@@ -77,4 +77,16 @@ public class InsuranceQuoteResponseEvent implements DomainEvent {
 	public void setPolicyLimit(MoneyAmountDto policyLimit) {
 		this.policyLimit = policyLimit;
 	}
+
+	@Override
+	public String toString() {
+		return "InsuranceQuoteResponseEvent{" +
+				"date=" + date +
+				", insuranceQuoteRequestId=" + insuranceQuoteRequestId +
+				", requestAccepted=" + requestAccepted +
+				", expirationDate=" + expirationDate +
+				", insurancePremium=" + insurancePremium +
+				", policyLimit=" + policyLimit +
+				'}';
+	}
 }

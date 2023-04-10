@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
@@ -32,11 +33,12 @@ public class InsuranceQuoteRequestMessageConsumer {
 	@Autowired
 	private InsuranceQuoteRequestRepository insuranceQuoteRequestRepository;
 
-	@JmsListener(destination = "${insuranceQuoteRequestEvent.queueName}")
-	public void receiveInsuranceQuoteRequest(final Message<InsuranceQuoteRequestEvent> message) {
+	@KafkaListener(topics = "${insuranceQuoteRequestEvent.queueName}",
+			groupId = "${spring.kafka.group-id}",
+			containerFactory = "insuranceQuoteRequestListenerFactory")
+	public void receiveInsuranceQuoteRequest(final InsuranceQuoteRequestEvent insuranceQuoteRequestEvent) {
 		logger.info("A new InsuranceQuoteRequestEvent has been received.");
 
-		InsuranceQuoteRequestEvent insuranceQuoteRequestEvent = message.getPayload();
 		InsuranceQuoteRequestDto insuranceQuoteRequestDto = insuranceQuoteRequestEvent.getInsuranceQuoteRequestDto();
 		Long id = insuranceQuoteRequestDto.getId();
 		Date date = insuranceQuoteRequestDto.getDate();

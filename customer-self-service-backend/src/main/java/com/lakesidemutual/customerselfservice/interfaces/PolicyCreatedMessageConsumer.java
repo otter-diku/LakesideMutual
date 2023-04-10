@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +26,13 @@ public class PolicyCreatedMessageConsumer {
 	@Autowired
 	private InsuranceQuoteRequestRepository insuranceQuoteRequestRepository;
 
-	@JmsListener(destination = "${policyCreatedEvent.queueName}")
-	public void receivePolicyCreatedEvent(final Message<PolicyCreatedEvent> message) {
-		logger.info("A new PolicyCreatedEvent has been received.");
-		final PolicyCreatedEvent policyCreatedEvent = message.getPayload();
+
+	@KafkaListener(topics = "${policyCreatedEvent.queueName}",
+			groupId = "${spring.kafka.group-id}",
+			containerFactory = "policyCreatedListenerFactory")
+	public void listenPolicyCreatedEvent(PolicyCreatedEvent policyCreatedEvent) {
+		logger.info("Received policy created event");
+
 		final Long id = policyCreatedEvent.getInsuranceQuoteRequestId();
 		final Optional<InsuranceQuoteRequestAggregateRoot> insuranceQuoteRequestOpt = insuranceQuoteRequestRepository.findById(id);
 

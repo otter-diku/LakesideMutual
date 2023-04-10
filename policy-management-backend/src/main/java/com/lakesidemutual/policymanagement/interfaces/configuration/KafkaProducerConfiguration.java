@@ -1,4 +1,4 @@
-package com.lakesidemutual.customerselfservice.interfaces.configuration;
+package com.lakesidemutual.policymanagement.interfaces.configuration;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

@@ -102,26 +102,26 @@ public class InsuranceQuoteRequestCoordinator {
 	}
 
 	@Operation(summary = "Create a new Insurance Quote Request.")
-	@PreAuthorize("isAuthenticated()")
+	//@PreAuthorize("isAuthenticated()")
 	@PostMapping /* MAP: State Creation Operation */ 
 	public ResponseEntity<InsuranceQuoteRequestDto> createInsuranceQuoteRequest(
 			Authentication authentication,
 			@Parameter(description = "the insurance quote request", required = true) @Valid @RequestBody InsuranceQuoteRequestDto requestDto) {
-		String loggedInUserEmail = authentication.getName();
-		UserLoginEntity loggedInUser = userLoginRepository.findByEmail(loggedInUserEmail);
-		CustomerId loggedInCustomerId = loggedInUser.getCustomerId();
-		if (loggedInCustomerId == null) {
-			logger.info("Customer needs to complete registration first.");
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+//		String loggedInUserEmail = authentication.getName();
+//		UserLoginEntity loggedInUser = userLoginRepository.findByEmail(loggedInUserEmail);
+//		CustomerId loggedInCustomerId = loggedInUser.getCustomerId();
+//		if (loggedInCustomerId == null) {
+//			logger.info("Customer needs to complete registration first.");
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
 
 		CustomerInfoDto customerInfoDto = requestDto.getCustomerInfo();
 		CustomerId customerId = new CustomerId(customerInfoDto.getCustomerId());
 
-		if (!customerId.equals(loggedInCustomerId)) {
-			logger.info("Can't create an Insurance Quote Request for a different customer.");
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+//		if (!customerId.equals(loggedInCustomerId)) {
+//			logger.info("Can't create an Insurance Quote Request for a different customer.");
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
 
 		CustomerInfoEntity customerInfoEntity = customerInfoDto.toDomainObject();
 		InsuranceOptionsEntity insuranceOptionsEntity = requestDto.getInsuranceOptions().toDomainObject();
